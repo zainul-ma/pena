@@ -20,13 +20,6 @@ type CircuitLog struct {
 	ErrorCode string        `json:"error_code" bson:"error_code"`
 }
 
-// CircuitStatus ...
-type CircuitStatus struct {
-	Closed  bool
-	Fail    bool
-	Tripped bool
-}
-
 var (
 	// DB ...
 	DB string
