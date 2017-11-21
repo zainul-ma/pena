@@ -10,9 +10,9 @@ import (
 
 // CircuitStatus ...
 type CircuitStatus struct {
-	Closed     bool
-	Fail       bool
-	Tripped    bool
+	Closed     bool `json:"closed"`
+	Fail       bool `json:"fail"`
+	Tripped    bool `json:"tripped"`
 	LastUpdate time.Time
 	conn       redis.Conn
 	source     string
