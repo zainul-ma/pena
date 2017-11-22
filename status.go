@@ -16,17 +16,30 @@ type CircuitStatus struct {
 	LastUpdate time.Time
 	conn       redis.Conn
 	source     string
+	host       string
+}
+
+func newPool(host string) *redis.Pool {
+	return &redis.Pool{
+		MaxIdle:   100,
+		MaxActive: 12000, // max number of connections
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.Dial("tcp", host)
+			if err != nil {
+				log.Println(err.Error())
+			}
+			return c, err
+		},
+	}
+
 }
 
 // Dial ...
 func (c *CircuitStatus) Dial(host string, source string) {
-	conn, err := redis.Dial("tcp", host)
-	c.conn = conn
+	c.host = host
+	c.conn = newPool(host).Get()
 	c.source = source
-	if err != nil {
-		log.Fatal(err)
-	}
-	// log.Println("dial ", host)
+	defer c.conn.Close()
 }
 
 // SetClosed ...
