@@ -37,9 +37,7 @@ func newPool(host string) *redis.Pool {
 // Dial ...
 func (c *CircuitStatus) Dial(host string, source string) {
 	c.host = host
-	c.conn = newPool(host).Get()
 	c.source = source
-	defer c.conn.Close()
 }
 
 // SetClosed ...
@@ -74,8 +72,11 @@ func (c *CircuitStatus) save(hostDest string, route string) {
 	if err != nil {
 		log.Println(err)
 	} else {
+
+		c.conn = newPool(c.host).Get()
 		_, errSave := c.conn.Do("SET", c.source+":log:"+hostDest+":"+route,
 			string(strCircuit))
+		defer c.conn.Close()
 		if errSave != nil {
 			log.Println("error save redis ", errSave)
 		}
